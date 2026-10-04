@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroFlex | Varun Manjunath</title>
+  <meta name="description" content="NeuroFlex: Lossless Element-Level ANN-SNN Co-Execution for Efficient Sparse Inference (MICRO 2026).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="who" href="../index.html">Varun Manjunath</a>
+    <nav aria-label="Site"><a href="../index.html">Back to home</a></nav>
+  </div>
+</header>
+<main class="wrap project">
+
+<div class="proj-head">
+ <div class="proj-text">
+  <p class="meta"><em>MICRO 2026</em></p>
+  <h1>NeuroFlex: Lossless Element-Level ANN&ndash;SNN Co-Execution for Efficient Sparse Inference</h1>
+  <p class="meta"><strong>Varun Manjunath</strong>, Pranav Ramesh, Gopalakrishnan Srinivasan</p>
+  <p class="lede">Inside one sparse layer, some output elements are cheap to compute as spikes and others are cheap as multiply-accumulates. NeuroFlex sends each element to the core that suits it, without changing a single output bit.</p>
+  <p class="pub-links">
+    <a href="https://arxiv.org/pdf/2511.05215">Paper (arXiv)</a>
+    <a href="https://github.com/BrainSeek-Lab/NeuroFlex_Code_weights">Code and weights (open-source artifact)</a>
+  </p>
+  <!-- When ready: <a href="../slides/neuroflex_micro_2026.pdf">Slides</a> -->
+
+ </div>
+  <figure class="hero-fig">
+    <a href="../assets/images/projects/neuroflex.png" title="Open full size"><img src="../assets/images/projects/neuroflex.png" alt="Heatmap of work per output element for a VGG-16 layer, showing several-fold variation across elements within a layer" width="672" height="570"></a>
+    <figcaption>Work per output element varies several-fold within a single layer (VGG-16 conv3_3). From Figure 1 of the paper. Click to enlarge.</figcaption>
+  </figure>
+</div>
+
+  <section>
+    <h2>The problem</h2>
+    <h3>Two ways to compute, with opposite strengths</h3>
+    <p>Sparse accelerators skip operand pairs where either side is zero. Almost all of them still compute with multiply-accumulates (the ANN way). Spiking neural networks (SNNs) offer another way: they replace multiplies with cheap accumulates over binary spikes, which saves energy per operation, but a value is rebuilt over several timesteps, so latency grows. ANN execution is fast but power-hungry. SNN execution is efficient but slow.</p>
+    <h3>The trade-off differs for every element</h3>
+    <p>After zeros on both sides are skipped, the number of operations left for each output element varies several-fold within the same layer. Elements with many surviving matches are better served by fast ANN execution. Elements with few matches are better served by SNN execution, because fewer operations have to pay for the timestep overhead. This per-element variation is the opportunity that existing designs leave unused.</p>
+    <h3>Hybrid accelerators switch too coarsely</h3>
+    <p>Existing hybrid ANN&ndash;SNN accelerators capture only part of it. Layer-level designs switch a whole layer between modes, so one core type sits idle whenever the other is active. The paper measures PE utilization of only 40&ndash;45% for layer-wise hybrids. Tile-level designs do better, at 60&ndash;83%, but a tile that spans both dense and sparse elements still has to commit to one mode, and the finest-grained of these rely on a lossy ANN-to-SNN conversion, so routing a tile to the SNN core costs accuracy.</p>
+    <h3>The real barrier: lossy conversion</h3>
+    <p>Older conversion methods only minimize conversion error. That error can be averaged out across a layer, but a single output element has nothing to average against, so routing individual elements to SNN execution was considered unsafe. Accuracy and efficiency were coupled.</p>
+  </section>
+
+  <section>
+    <h2>The approach</h2>
+    <h3>Per-element exact equivalence</h3>
+    <p>PASCAL (Ramesh and Srinivasan, TMLR 2025) proved that an ANN with a quantized activation (QCFS) and its converted SNN give bit-identical results under integer arithmetic. Our key observation is that the proof only depends on local integer arithmetic for each output element: membrane updates, threshold comparisons and resets do not interact across output positions. So the equivalence holds for every individual output element, and any element can run as ANN or SNN with identical results. That removes the lossy-conversion barrier and unlocks element-level hybrid execution.</p>
+    <h3>A cost-guided offline scheduler</h3>
+    <p>Each element is scored by its marginal energy and latency cost on each core, based on its number of effective non-zero matches and coefficients measured from RTL microbenchmarks. The scheduler minimizes the layer's energy-delay product (EDP) with simulated annealing, starting from each element on its cheaper core and flipping assignments to balance load across PEs. The problem is NP-hard, but it solves in under 2 seconds for a 512&times;512 output. The resulting per-element mode mask is stored with the weights, so there is no runtime scheduling overhead.</p>
+    <h3>Hardware that makes switching free</h3>
+    <p>NeuroFlex pairs ANN and SNN cores (16 PEs each) that share one bitmap-encoded FiberCache and memory hierarchy. All data stays INT8, and spikes are generated on the fly inside the PE and never written to memory. Switching an element's mode therefore changes only the PE's control path, not the storage format or memory traffic.</p>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <div class="facts">
+      <div><b>97&ndash;99%</b><span>PE utilization, versus 40&ndash;45% layer-wise and 60&ndash;83% tile-wise</span></div>
+      <div><b>57&ndash;67%</b><span>lower EDP than a strong ANN-only baseline (SparTen)</span></div>
+      <div><b>2.5&times;</b><span>speedup over a dual-sparse SNN-only baseline (LoAS)</span></div>
+      <div><b>0</b><span>accuracy loss; outputs are bit-identical</span></div>
+    </div>
+    <ul class="result-list" style="margin-top:1.25rem">
+      <li>Evaluated on seven models across CNNs (VGG-16, ResNet-34, GoogleNet), transformers (BERT, ViT-S) and LLMs (GPT-2 XL, OPT-6.7B).</li>
+      <li>The cost-guided scheduler improves throughput by 16&ndash;19% over random element assignment, which shows the value of matching each element to the right core.</li>
+      <li>Hardware synthesized at 560 MHz in a 40 nm node, with an RTL-backed cycle-level simulator.</li>
+      <li>Limitation: the guarantees apply to models whose activations can be represented with QCFS.</li>
+    </ul>
+  </section>
+
+</main>
+<footer><div class="wrap">Varun Manjunath, University of Southern California.</div></footer>
+</body>
+</html>

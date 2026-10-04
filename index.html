@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Varun Manjunath</title>
+  <meta name="description" content="Varun Manjunath, PhD candidate in Electrical and Computer Engineering at USC. Efficient inference of LLMs, multimodal models and sparse DNNs, from wafer-scale serving to edge accelerators.">
+  <!-- After you set up Google Search Console, paste its verification meta tag here -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="who" href="index.html">Varun Manjunath</a>
+    <nav aria-label="Sections">
+      <a href="#news">News</a>
+      <a href="#publications">Publications</a>
+      <a href="#education">Education</a>
+      <a href="#awards">Awards</a>
+      <a href="#talks">Talks</a>
+      <a href="#service">Teaching and service</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <div class="bio">
+      <h1>Varun Manjunath</h1>
+      <p class="role">PhD candidate, Electrical and Computer Engineering, University of Southern California</p>
+
+      <p>I work on efficient inference of LLMs, multimodal models and sparse DNNs, from wafer-scale serving to energy-constrained edge accelerators. I am advised by
+        <a href="https://sites.usc.edu/intelligentcomputinglab/members/principal-investigator/">Prof. Priyadarshini Panda</a>
+        in the Intelligent Computing Lab at USC.</p>
+
+      <p>The problem I keep returning to: work that looks uniform to the hardware is not. Bit-serial operand pairs, sparse output elements, and the encode, prefill and decode stages of a multimodal request carry unequal cost, and the straggler sets the makespan or misses the deadline. I look for the finest granularity at which work can be independently assigned, and reach it through hardware&ndash;software co-design.</p>
+
+      <p>I began my PhD at Yale University in August 2025 and moved to USC in January 2026 along with my advisor, Prof. Panda. Before that, I completed a B.Tech (Honours) and M.Tech in Electrical Engineering at IIT Madras, advised by Prof. Gopalakrishnan Srinivasan.</p>
+
+      <ul class="links">
+        <li><a href="mailto:varunman@usc.edu">varunman@usc.edu</a></li>
+        <li><a href="https://scholar.google.com/citations?user=4NWpXVYAAAAJ&amp;hl=en">Google Scholar</a></li>
+        <li><a href="https://www.linkedin.com/in/varun-manjunath-38b97a119/">LinkedIn</a></li>
+        <li><a href="https://github.com/varun-manjunath27">GitHub</a></li>
+        <li><a href="cv/CV_Varun.pdf">CV (PDF)</a></li>
+      </ul>
+    </div>
+    <img class="portrait" src="assets/images/bio.jpg" alt="Portrait of Varun Manjunath" width="640" height="800">
+  </div>
+
+  <!-- ===================== NEWS ===================== -->
+  <!-- Add newest items at the top. Change "2026" to "2026/MM" once you know the month. -->
+  <section id="news">
+    <h2>News</h2>
+    <ul class="news">
+      <li><time>2026</time><span>BRIM accepted at ICCAD 2026.</span></li>
+      <li><time>2026</time><span>NeuroFlex accepted at MICRO 2026, with an open-source artifact.</span></li>
+      <li><time>2026</time><span>Finalist in the MICRO 2026 Student Research Competition.</span></li>
+      <li><time>2026</time><span>Named a DAC Young Fellow and won Best Video Presentation at DAC 2026.</span></li>
+      <li><time>2026</time><span>Serving as an artifact evaluator for MICRO 2026.</span></li>
+      <li><time>2026/11</time><span>Presenting BRIM at ICCAD (San Jose) and NeuroFlex at MICRO (Athens).</span></li>
+    </ul>
+  </section>
+
+  <!-- ===================== PUBLICATIONS ===================== -->
+  <section id="publications">
+    <h2>Publications</h2>
+    <p style="margin-top:-0.5rem;color:var(--muted)">Full list on <a href="https://scholar.google.com/citations?user=4NWpXVYAAAAJ&amp;hl=en">Google Scholar</a>. Each project page has the full story and a link to the paper.</p>
+
+    <!-- Current project: FUSE -->
+    <article class="pub">
+      <div class="figure stats" aria-label="FUSE headline results">
+        <div class="stat"><b>2.31&times;</b><span>lower mean TTFT than a tuned disaggregated baseline</span></div>
+        <div class="stat"><b>7.9&times;</b><span>lower TPOT than vLLM on 16 A100s</span></div>
+      </div>
+      <div>
+        <h3>FUSE: Fine-Grained Unified Stage Execution for Multimodal LLM Serving on Wafer-Scale Chips</h3>
+        <p class="authors"><strong>Varun Manjunath</strong></p>
+        <p class="venue"><em>Current project</em></p>
+        <p class="point">Wafer-scale multimodal serving fixes encode, prefill and decode partitions offline, so they break as request mixes shift. FUSE sizes and places every dispatch online against deadlines.</p>
+        <p class="pub-links">
+          <a href="projects/fuse.html">Project page</a>
+        </p>
+      </div>
+    </article>
+
+    <!-- BRIM -->
+    <article class="pub">
+      <div class="figure util" role="img" aria-label="PE utilization: prior dual-sided designs 56 to 64 percent, BRIM above 90 percent">
+        <div class="row"><div class="meta"><span>Prior dual-sided</span><b>56&ndash;64%</b></div><div class="track"><i style="--w:64%"></i></div></div>
+        <div class="row ours"><div class="meta"><span>BRIM</span><b>&gt;90%</b></div><div class="track"><i style="--w:90%"></i></div></div>
+        <p class="cap">PE utilization</p>
+      </div>
+      <div>
+        <h3>BRIM: Workload-Balanced Dual-Sided Bit-Serial Sparse Inference Accelerator</h3>
+        <p class="authors"><strong>Varun Manjunath</strong>, Ruokai Yin, Donghyun Lee, Arkapravo Ghosh, Priyadarshini Panda</p>
+        <p class="venue"><em>ICCAD 2026</em></p>
+        <p class="point">Dual-sided bit-serial sparse accelerators cap PE utilization at 56&ndash;64% because concurrent weight&ndash;activation pairs carry unequal work. Balanced pruning plus lightweight runtime slot donation lifts utilization above 90%, for up to 2.37&times; speedup across CNNs, ViTs and LLMs.</p>
+        <p class="pub-links">
+          <a href="projects/brim.html">Project page</a>
+          <a href="https://arxiv.org/pdf/2607.19431">Paper (arXiv)</a>
+        </p>
+      </div>
+    </article>
+
+    <!-- NeuroFlex -->
+    <article class="pub">
+      <div class="figure util" role="img" aria-label="PE utilization: layer-wise 40 to 45 percent, tile-wise 60 to 83 percent, NeuroFlex 97 to 99 percent">
+        <div class="row"><div class="meta"><span>Layer-wise</span><b>40&ndash;45%</b></div><div class="track"><i style="--w:45%"></i></div></div>
+        <div class="row"><div class="meta"><span>Tile-wise</span><b>60&ndash;83%</b></div><div class="track"><i style="--w:83%"></i></div></div>
+        <div class="row ours"><div class="meta"><span>NeuroFlex</span><b>97&ndash;99%</b></div><div class="track"><i style="--w:99%"></i></div></div>
+        <p class="cap">PE utilization</p>
+      </div>
+      <div>
+        <h3>NeuroFlex: Lossless Element-Level ANN&ndash;SNN Co-Execution for Efficient Sparse Inference</h3>
+        <p class="authors"><strong>Varun Manjunath</strong>, Pranav Ramesh, Gopalakrishnan Srinivasan</p>
+        <p class="venue"><em>MICRO 2026</em></p>
+        <p class="point">Hybrid ANN&ndash;SNN accelerators route work per layer or tile even though per-element cost varies several-fold. Proving integer-exact ANN&ndash;SNN equivalence per output element enables element-level routing, with 57&ndash;67% lower EDP and bit-identical outputs.</p>
+        <p class="pub-links">
+          <a href="projects/neuroflex.html">Project page</a>
+          <a href="https://arxiv.org/pdf/2511.05215">Paper (arXiv)</a>
+          <a href="https://github.com/BrainSeek-Lab/NeuroFlex_Code_weights">Code and weights</a>
+        </p>
+      </div>
+    </article>
+
+    <!-- Through Fabric -->
+    <article class="pub">
+      <div class="figure stats" aria-label="Through Fabric headline results">
+        <div class="stat"><b>2 bit/s</b><span>thermal covert channel across the TEE boundary</span></div>
+        <div class="stat"><b>1.9%</b><span>bit error rate</span></div>
+      </div>
+      <div>
+        <h3>Through Fabric: A Cross-world Thermal Covert Channel on TEE-enhanced FPGA-MPSoC Systems</h3>
+        <p class="authors">Hassan Nassar*, Jeferson Gonzalez-Gomez*, <strong>Varun Manjunath</strong>, Lars Bauer, J&ouml;rg Henkel <span style="white-space:nowrap">(*equal contribution)</span></p>
+        <p class="venue"><em>ASP-DAC 2025</em></p>
+        <p class="point">Trusted execution environments on FPGA-MPSoCs are assumed to isolate secure-world data. We showed the first thermal cross-world covert channel on a commercial FPGA-MPSoC, driven by a benign AES accelerator with no extra access rights.</p>
+        <p class="pub-links">
+          <a href="projects/through-fabric.html">Project page</a>
+          <a href="https://dl.acm.org/doi/epdf/10.1145/3658617.3697767">Paper (ACM)</a>
+        </p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================== EDUCATION ===================== -->
+  <section id="education">
+    <h2>Education</h2>
+    <div class="entry">
+      <strong>Ph.D., Electrical and Computer Engineering, University of Southern California</strong>
+      <span class="when">Jan 2026 &ndash; present (expected May 2030)</span>
+      <p>Advisor: Prof. Priyadarshini Panda</p>
+    </div>
+    <div class="entry">
+      <strong>B.Tech (Honours) + M.Tech, Electrical Engineering, Indian Institute of Technology Madras</strong>
+      <span class="when">Aug 2020 &ndash; May 2025</span>
+      <p>Advisor: Prof. Gopalakrishnan Srinivasan. GPA: 8.97/10</p>
+    </div>
+  </section>
+
+  <!-- ===================== AWARDS ===================== -->
+  <section id="awards">
+    <h2>Awards and honors</h2>
+    <p class="subhead" style="margin-top:0">Research</p>
+    <ul class="plain">
+      <li>DAC Young Fellow, DAC 2026</li>
+      <li>DAC Young Fellow Best Video Presentation, DAC 2026</li>
+      <li>MICRO Student Research Competition Finalist, MICRO 2026</li>
+    </ul>
+    <p class="subhead">Academic</p>
+    <ul class="plain">
+      <li>DAAD WISE Scholarship, IIT Madras, Summer 2023</li>
+      <li>Shankar Family Scholarship, IIT Madras, Fall 2022 and Fall 2024</li>
+    </ul>
+  </section>
+
+  <!-- ===================== TALKS ===================== -->
+  <section id="talks">
+    <h2>Talks</h2>
+    <div class="entry">
+      <strong>BRIM: Workload-Balanced Dual-Sided Bit-Serial Sparse Inference Accelerator</strong>
+      <span class="when">Nov 2026</span>
+      <p>ICCAD 2026, San Jose, USA</p>
+    </div>
+    <div class="entry">
+      <strong>NeuroFlex: Lossless Element-Level ANN&ndash;SNN Co-Execution for Efficient Sparse Inference</strong>
+      <span class="when">Nov 2026</span>
+      <p>MICRO 2026, Athens, Greece</p>
+    </div>
+  </section>
+
+  <!-- ===================== TEACHING & SERVICE ===================== -->
+  <section id="service">
+    <h2>Teaching and service</h2>
+    <div class="entry">
+      <strong>Teaching assistant, EE 2003 Computer Organization, IIT Madras</strong>
+      <span class="when">Fall 2024</span>
+      <p>Instructor: Prof. Janakiraman Viraraghavan. <a href="https://www.ee.iitm.ac.in/vlsi/courses/ee2003_2024">Course page</a></p>
+    </div>
+    <div class="entry">
+      <strong>Artifact evaluator, IEEE/ACM International Symposium on Microarchitecture</strong>
+      <span class="when">MICRO 2026</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">Last updated October 2026.</div>
+</footer>
+
+</body>
+</html>

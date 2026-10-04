@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Through Fabric | Varun Manjunath</title>
+  <meta name="description" content="Through Fabric: A Cross-world Thermal Covert Channel on TEE-enhanced FPGA-MPSoC Systems (ASP-DAC 2025).">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="who" href="../index.html">Varun Manjunath</a>
+    <nav aria-label="Site"><a href="../index.html">Back to home</a></nav>
+  </div>
+</header>
+<main class="wrap project">
+
+<div class="proj-head">
+ <div class="proj-text">
+  <p class="meta"><em>ASP-DAC 2025</em></p>
+  <h1>Through Fabric: A Cross-world Thermal Covert Channel on TEE-enhanced FPGA-MPSoC Systems</h1>
+  <p class="meta">Hassan Nassar*, Jeferson Gonzalez-Gomez*, <strong>Varun Manjunath</strong>, Lars Bauer, J&ouml;rg Henkel (*equal contribution)</p>
+  <p class="lede">A trusted execution environment is supposed to keep a secure world isolated from the normal world. We show that a benign hardware accelerator, heated on purpose, can carry data across that boundary as temperature.</p>
+  <p class="pub-links">
+    <a href="https://dl.acm.org/doi/epdf/10.1145/3658617.3697767">Paper (ACM)</a>
+  </p>
+  <!-- When ready: <a href="../slides/through_fabric.pdf">Slides</a> -->
+
+ </div>
+  <figure class="hero-fig">
+    <a href="../assets/images/projects/through-fabric.png" title="Open full size"><img src="../assets/images/projects/through-fabric.png" alt="Overview of the attack: a secure-world CPU drives a benign hardware accelerator in programmable logic, and a normal-world CPU reads the logic's temperature sensor" width="1011" height="539"></a>
+    <figcaption>Overview of the cross-world thermal covert channel. From Figure 1 of the paper. Click to enlarge.</figcaption>
+  </figure>
+</div>
+
+  <section>
+    <h2>The problem</h2>
+    <p>Modern FPGA-MPSoCs combine processors with programmable logic, and vendors protect sensitive data on them with trusted execution environments (TEEs) such as ARM TrustZone and OP-TEE. A TEE splits the system into a secure world and a normal world and guards the confidentiality and integrity of what runs in the secure side. It does not address covert and side channels, which let two cooperating programs leak data through a shared physical resource.</p>
+    <p>Covert channels on FPGAs were already known, using voltage, frequency or temperature. But earlier work made two assumptions that rarely hold in practice. It assumed the system runs bare metal with no TEE, and it assumed the attacker can load malicious hardware, such as ring oscillators, for both the sender and the receiver. A TEE is easy to deploy on FPGA-MPSoCs, and malicious hardware is easy to detect and ban.</p>
+    <p>The question we asked: can a TEE still be bypassed with no malicious hardware and no extra privileges?</p>
+  </section>
+
+  <section>
+    <h2>The approach</h2>
+    <p>The sender is a trusted application in the secure world, for example one supplied by a dishonest vendor. It uses an ordinary open-source AES accelerator in the programmable logic. To send a 1, it runs extra decryptions, which heats the logic. To send a 0, it waits and lets the logic cool. The receiver is an ordinary normal-world application that reads the logic's temperature sensor, which is accessible from the normal world.</p>
+    <p>Reading the message back is a signal-processing problem, because ambient temperature and other noise also move the reading. The receiver filters the readings with an FFT over a moving window at the transmit frequency, then decodes each bit using high and low amplitude thresholds. When many identical bits arrive in a row, the temperature saturates, so it also checks the slope of the signal to decide whether the bit flipped.</p>
+    <p>Neither side needs privileged permissions, custom hardware on the sender, or extra logic on the receiver.</p>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <div class="facts">
+      <div><b>2 bit/s</b><span>transmission rate</span></div>
+      <div><b>1.9%</b><span>bit error rate</span></div>
+      <div><b>4.3%</b><span>packet error rate</span></div>
+    </div>
+    <ul class="result-list" style="margin-top:1.25rem">
+      <li>Demonstrated on a commercial ZCU102 FPGA-MPSoC running OP-TEE: 8,000 bits sent as 1,000 packets of 8 bits.</li>
+      <li>To show it visually, we sent a 64&times;64 binary image across the channel with a bit error rate under 2%.</li>
+      <li>The first temperature-based covert channel between CPUs through an FPGA, and the first shown to bypass a TEE on an FPGA-MPSoC.</li>
+      <li>We also discuss countermeasures: injecting noise at the channel frequency, and adding an increasing delay when a trusted application uses the accelerator at an abnormal rate. Both carry performance or energy costs.</li>
+    </ul>
+  </section>
+
+</main>
+<footer><div class="wrap">Varun Manjunath, University of Southern California.</div></footer>
+</body>
+</html>

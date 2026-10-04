@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FUSE | Varun Manjunath</title>
+  <meta name="description" content="FUSE: Fine-Grained Unified Stage Execution for Multimodal LLM Serving on Wafer-Scale Chips.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="who" href="../index.html">Varun Manjunath</a>
+    <nav aria-label="Site"><a href="../index.html">Back to home</a></nav>
+  </div>
+</header>
+<main class="wrap project">
+
+<div class="proj-head">
+ <div class="proj-text">
+  <p class="meta"><em>Current project</em></p>
+  <h1>FUSE: Fine-Grained Unified Stage Execution for Multimodal LLM Serving on Wafer-Scale Chips</h1>
+  <p class="meta"><strong>Varun Manjunath</strong></p>
+  <p class="lede">A multimodal request passes through encode, prefill and decode, and the mix of requests changes from minute to minute. FUSE decides, online and per dispatch, how much of the wafer each stage gets and where it runs, so deadlines are met as the workload shifts.</p>
+  <!-- When ready, add: <p class="pub-links"><a href="...">Paper</a> <a href="...">Code</a> <a href="../slides/fuse.pdf">Slides</a></p> -->
+
+ </div>
+  <figure class="hero-fig">
+    <a href="../assets/images/projects/fuse.png" title="Open full size"><img src="../assets/images/projects/fuse.png" alt="Diagram comparing a fixed encode, prefill and decode partition of a wafer-scale chip with FUSE's online, per-dispatch allocation" width="1600" height="900"></a>
+    <figcaption>Placeholder: replace with your own diagram of a fixed partition versus FUSE's per-dispatch allocation.</figcaption>
+  </figure>
+</div>
+
+  <section>
+    <h2>The problem</h2>
+    <p>Serving a multimodal model means running three very different stages for every request. Encode turns an image or video into tokens, prefill processes the whole prompt at once, and decode generates the answer one token at a time. Each stage stresses the hardware differently, and each is judged by a different deadline: time to first token (TTFT) for the front of the pipeline, time per output token (TPOT) for decode.</p>
+    <p>On a wafer-scale chip, the usual answer is to split the cores into fixed encode, prefill and decode partitions ahead of time, in the style of disaggregated serving. That works only while the request mix stays close to what the split was tuned for. When more image-heavy requests arrive, the encode partition becomes the bottleneck while decode cores sit idle, and the reverse happens when prompts are text-heavy.</p>
+    <p>Schedulers built for GPU clusters do not fix this. They allocate work at the granularity of a whole device, so they cannot use what makes a wafer different: allocation per core, and high-bandwidth die-to-die (D2D) links between neighboring regions of the wafer.</p>
+  </section>
+
+  <section>
+    <h2>The approach</h2>
+    <p>FUSE is an online, deadline-driven orchestrator. Instead of fixing partitions offline, it sizes and places every dispatch at runtime, using three mechanisms:</p>
+    <ul class="result-list">
+      <li><strong>Deadline-proportional encode and prefill budgeting.</strong> Encode and prefill budgets are set in proportion to request deadlines.</li>
+      <li><strong>Quantum-bounded dispatch sizing.</strong> Work is issued in bounded quanta, so dispatch sizes stay controlled as the load shifts.</li>
+      <li><strong>Co-location-aware decode placement.</strong> Decode placement takes co-location into account, with die-to-die bandwidth in mind.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <div class="facts">
+      <div><b>2.31&times;</b><span>lower mean TTFT (4.23&times; at p90) than a tuned disaggregated baseline</span></div>
+      <div><b>1.52&times;</b><span>lower TPOT than the same baseline</span></div>
+      <div><b>1.34&times;</b><span>goodput</span></div>
+      <div><b>2.85&times;</b><span>HBM utilization</span></div>
+    </div>
+    <p style="margin-top:1.25rem">Against vLLM on 16 A100 GPUs, FUSE reaches 7.9&times; lower TPOT and 3.0&times; lower end-to-end latency.</p>
+  </section>
+
+</main>
+<footer><div class="wrap">Varun Manjunath, University of Southern California.</div></footer>
+</body>
+</html>
